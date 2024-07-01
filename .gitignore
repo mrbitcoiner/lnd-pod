@@ -1,0 +1,4 @@
+lnd.conf
+.env
+volume/data
+**/*.swp

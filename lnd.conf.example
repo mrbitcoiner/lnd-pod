@@ -1,0 +1,18 @@
+# LND
+alias=lnd-pod
+color=#FFFFFF
+listen=0.0.0.0:9735
+wallet-unlock-password-file=/app/data/lnd/walletpass.txt
+wallet-unlock-allow-create=true
+
+# Bitcoin
+bitcoin.node=bitcoind
+# bitcoin.mainnet=true
+# bitcoin.testnet=true
+# bitcoin.simnet=true
+# bitcoin.regtest=true
+# bitcoin.signet=true
+bitcoind.rpcuser=bitcoin
+bitcoind.rpcpass=bitcoin
+bitcoind.rpchost=<bitcoin_host>
+bitcoind.rpcpolling=true
