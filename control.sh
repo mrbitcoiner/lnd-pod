@@ -22,9 +22,6 @@ common() {
 	mkdir -p "${RELDIR}/volume/data/lnd"
 	chmod +x "${RELDIR}"/volume/scripts/*.sh
 	check_env
-	[ -e "${RELDIR}/volume/data/lnd/walletpass.txt" ] ||
-		dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum | awk '{print $1}' \
-			>"${RELDIR}/volume/data/lnd/walletpass.txt"
 }
 mk_systemd() {
 	! [ -e "/etc/systemd/system/${CT_NAME}.service" ] \
@@ -64,6 +61,7 @@ build() {
 	"${RELDIR}"
 }
 up() {
+	[ -e "${RELDIR}/volume/data/lnd/walletpass.txt" ] || create_wallet
 	podman run --rm \
 		-p ${EXT_PORT}:8080 \
 		-v ${RELDIR}/volume:/app \
@@ -84,6 +82,20 @@ clean() {
 lncli() {
 	! [ -z "${1}" ] || eprintln 'Expected lncli args'
 	podman exec -it "${CT_NAME}" bash -c "lncli ${1}"
+}
+create_wallet() {
+	! [ -e "${RELDIR}/volume/data/lnd/walletpass.txt" ] \
+		|| eprintln "wallet already exists"
+	printf "Wallet password: "
+	read password
+	printf "\n"
+	printf "${password}" | grep -E '^.{8,256}$' 1>/dev/null || \
+		eprintln 'password must have at least 8 chars'
+	printf "${password}" > ${RELDIR}/volume/data/lnd/walletpass.txt
+	podman ps --format="{{.Names}}" | grep "${CT_NAME}" 1>/dev/null 2>&1 || up
+	sleep 5
+	podman exec -it "${CT_NAME}" bash -c "lncli create"
+	printf "Wallet created!"
 }
 ####################
 common
