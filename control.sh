@@ -16,7 +16,8 @@ check_env() {
 	[ -e "${RELDIR}/.env" ] || eprintln 'please, copy .env.example to .env'
 	source "${RELDIR}"/.env
 	[ -e "${RELDIR}/lnd.conf" ] || eprintln 'please, copy lnd.conf.example to lnd.conf'
-	! [ -z "${EXT_PORT}" ] || eprintln 'undefined env EXT_PORT'
+	! [ -z "${EXT_REST_PORT}" ] || eprintln 'undefined env EXT_REST_PORT'
+	! [ -z "${EXT_LIGHTNING_PORT}" ] || eprintln 'undefined env EXT_LIGHTNING_PORT'
 }
 common() {
 	mkdir -p "${RELDIR}/volume/data/lnd"
@@ -64,7 +65,8 @@ build() {
 up() {
 	[ -e "${RELDIR}/volume/data/lnd/walletpass.txt" ] || create_wallet
 	podman run --rm \
-		-p ${EXT_PORT}:8080 \
+		-p ${EXT_REST_PORT}:8080 \
+		-p ${EXT_LIGHTNING_PORT}:9735 \
 		-v ${RELDIR}/volume:/app \
 		-v ${RELDIR}/volume/data/lnd:/root/.lnd \
 		-v ${RELDIR}/lnd.conf:/root/.lnd/lnd.conf \
