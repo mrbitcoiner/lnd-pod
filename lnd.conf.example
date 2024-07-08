@@ -3,6 +3,7 @@ alias=lnd-pod
 color=#FFFFFF
 listen=0.0.0.0:9735
 restlisten=0.0.0.0:8080
+#rpclisten=0.0.0.0:10009
 #tlsextraip=<extra_ip_1>
 #tlsextraip=<extra_ip_2>
 wallet-unlock-password-file=/app/data/lnd/walletpass.txt
